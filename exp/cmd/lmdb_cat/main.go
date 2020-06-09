@@ -27,7 +27,7 @@ func main() {
 	lmdbcmd.PrintVersion()
 
 	dbs := flag.Args()
-	specs := make([]*catSpec, 0, len(dbs))
+	var specs []*catSpec
 	for _, db := range dbs {
 		spec, err := parseCatSpec(db)
 		if err != nil {
@@ -59,10 +59,7 @@ func main() {
 
 	for _, spec := range specs {
 		opt := &catOptions{DB: spec.DB}
-		err := cat(spec.Path, opt)
-		if err != nil {
-			log.Fatal(err)
-		}
+		cat(spec.Path, opt)
 	}
 }
 
@@ -181,7 +178,7 @@ func cat(path string, opt *catOptions) error {
 	if err != nil {
 		return err
 	}
-	err = env.Open(path, lmdbcmd.OpenFlag(), 0644)
+	err = env.Open(path, lmdbcmd.OpenFlag(), 644)
 	defer env.Close()
 	if err != nil {
 		return err

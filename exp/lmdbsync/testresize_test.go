@@ -42,17 +42,13 @@ func TestResize(t *testing.T) {
 	}
 
 	var root lmdb.DBI
-	err = env.Update(func(txn *lmdb.Txn) (err error) {
+	env.Update(func(txn *lmdb.Txn) (err error) {
 		root, err = txn.OpenRoot(0)
 		if err != nil {
 			return err
 		}
 		return txn.Put(root, []byte("_start"), []byte(time.Now().String()), 0)
 	})
-	if err != nil {
-		t.Error(err)
-		return
-	}
 
 	before, err := env.Info()
 	if err != nil {
@@ -80,10 +76,10 @@ func TestResize(t *testing.T) {
 		return
 	}
 	closePipes := func() {
-		_ = w1.Close()
-		_ = w2.Close()
-		_ = r1.Close()
-		_ = r2.Close()
+		w1.Close()
+		w2.Close()
+		r1.Close()
+		r2.Close()
 	}
 
 	cmd1 := exec.Command(bin)

@@ -2,7 +2,6 @@ package lmdb
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -109,7 +108,7 @@ func TestEnv_FD(t *testing.T) {
 	}()
 
 	fd, err := env.FD()
-	if !errors.Is(err, errNotOpen) {
+	if err != errNotOpen {
 		t.Errorf("fd: %x (%v)", fd, err)
 	}
 
@@ -283,7 +282,7 @@ func TestEnv_ReaderList(t *testing.T) {
 	}
 
 	var readers []string
-	_ = env.ReaderList(func(msg string) error {
+	env.ReaderList(func(msg string) error {
 		t.Logf("reader: %q", msg)
 		readers = append(readers, msg)
 		return nil
