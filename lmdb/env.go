@@ -152,6 +152,28 @@ func (env *Env) ReaderList(fn func(string) error) error {
 	return operrno("mdb_reader_list", ret)
 }
 
+// Get retrieves items from database dbi.  If txn.RawRead is true the slice
+// returned by Get references a readonly section of memory that must not be
+// accessed after txn has terminated.
+//
+// See tg_get.
+func (env *Env) Get(dbi DBI, key []byte) ([]byte, error) {
+	kdata, kn := valBytes(key)
+	val := new(C.MDB_val)
+
+	ret := C.lmdbgo_mdb_tg_get(
+		env._env, C.MDB_dbi(dbi),
+		(*C.char)(unsafe.Pointer(&kdata[0])), C.size_t(kn),
+		val,
+	)
+	err := operrno("tg_get", ret)
+	if err != nil {
+		return nil, err
+	}
+
+	return getBytesCopy(val), nil
+}
+
 // ReaderCheck clears stale entries from the reader lock table and returns the
 // number of entries cleared.
 //

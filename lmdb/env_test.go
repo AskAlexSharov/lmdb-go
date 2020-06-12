@@ -613,3 +613,34 @@ func TestEnv_CloseDBI(t *testing.T) {
 		t.Errorf("unexpected entries: %d (not %d)", stat.Entries, numdb)
 	}
 }
+
+func TestEnv_Get(t *testing.T) {
+	env := setup(t)
+	defer clean(env, t)
+
+	var dbi DBI
+	err := env.Update(func(txn *Txn) (err error) {
+		dbi, err = txn.CreateDBI("1")
+		if err != nil {
+			return err
+		}
+		err = txn.Put(dbi, []byte{1}, []byte{2}, 0)
+		if err != nil {
+			return err
+		}
+
+		return err
+	})
+	if err != nil {
+		t.Errorf("%s", err)
+	}
+
+	v, err := env.Get(dbi, []byte{1})
+	if err != nil {
+		t.Errorf("%s", err)
+	}
+
+	if !bytes.Equal(v, []byte{2}) {
+		t.Errorf("Unexpected value: %x", v)
+	}
+}

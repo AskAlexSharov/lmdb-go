@@ -80,3 +80,22 @@ int lmdbgo_mdb_cursor_get2(MDB_cursor *cur, char *kdata, size_t kn, char *vdata,
     LMDBGO_SET_VAL(val, vn, vdata);
     return mdb_cursor_get(cur, key, val, op);
 }
+
+// TurboGeth-specific methods
+int lmdbgo_mdb_tg_get(MDB_env *env, MDB_dbi dbi, char *kdata, size_t kn, MDB_val *val) {
+    MDB_val key;
+    LMDBGO_SET_VAL(&key, kn, kdata);
+
+    MDB_txn *txn = NULL;
+    int rc = MDB_SUCCESS;
+
+    rc = mdb_txn_begin(env, NULL, MDB_RDONLY, &txn);
+    if (rc)
+		goto finish;
+
+    rc = mdb_get(txn, dbi, &key, val);
+
+finish:
+    mdb_txn_abort(txn);
+    return rc;
+}

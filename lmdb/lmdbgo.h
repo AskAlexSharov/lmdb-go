@@ -39,4 +39,7 @@ typedef struct{ const char *p; } lmdbgo_ConstCString;
  * */
 int lmdbgo_mdb_reader_list(MDB_env *env, size_t ctx);
 
+// TurboGeth-specific methods
+int lmdbgo_mdb_tg_get(MDB_env *env, MDB_dbi dbi, char *kdata, size_t kn, MDB_val *val);
+
 #endif
