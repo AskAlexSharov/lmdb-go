@@ -171,7 +171,7 @@ func (env *Env) Get(dbi DBI, key []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	return getBytesCopy(val), nil
+	return getBytes(val), nil
 }
 
 // ReaderCheck clears stale entries from the reader lock table and returns the
