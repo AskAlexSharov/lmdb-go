@@ -95,7 +95,7 @@ func NewEnv() (*Env, error) {
 func (env *Env) Open(path string, flags uint, mode os.FileMode) error {
 	cpath := C.CString(path)
 	defer C.free(unsafe.Pointer(cpath))
-	ret := C.mdb_env_open(env._env, cpath, C.uint(NoTLS|flags), C.mdb_mode_t(mode))
+	ret := C.mdb_env_open(env._env, cpath, C.uint(flags), C.mdb_mode_t(mode))
 	return operrno("mdb_env_open", ret)
 }
 
