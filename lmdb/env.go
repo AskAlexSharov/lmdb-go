@@ -448,6 +448,10 @@ func (env *Env) RunTxn(flags uint, fn TxnOp) error {
 // Any call to Commit, Abort, Reset or Renew on a Txn created by View will
 // panic.
 func (env *Env) View(fn TxnOp) error {
+	return env.run(true, Readonly, fn)
+}
+
+func (env *Env) ViewLocked(fn TxnOp) error {
 	return env.run(false, Readonly, fn)
 }
 
