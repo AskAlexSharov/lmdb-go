@@ -95,7 +95,7 @@ func NewEnv() (*Env, error) {
 func (env *Env) Open(path string, flags uint, mode os.FileMode) error {
 	cpath := C.CString(path)
 	defer C.free(unsafe.Pointer(cpath))
-	ret := C.mdb_env_open(env._env, cpath, C.uint(NoTLS|flags), C.mdb_mode_t(mode))
+	ret := C.mdb_env_open(env._env, cpath, C.uint(flags), C.mdb_mode_t(mode))
 	return operrno("mdb_env_open", ret)
 }
 
@@ -448,6 +448,10 @@ func (env *Env) RunTxn(flags uint, fn TxnOp) error {
 // Any call to Commit, Abort, Reset or Renew on a Txn created by View will
 // panic.
 func (env *Env) View(fn TxnOp) error {
+	return env.run(true, Readonly, fn)
+}
+
+func (env *Env) ViewLocked(fn TxnOp) error {
 	return env.run(false, Readonly, fn)
 }
 

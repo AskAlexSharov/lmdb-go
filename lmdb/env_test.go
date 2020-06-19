@@ -143,8 +143,8 @@ func TestEnv_Flags(t *testing.T) {
 		return
 	}
 
-	if flags&NoTLS == 0 {
-		t.Errorf("NoTLS is not set")
+	if flags&NoTLS == 1 {
+		t.Errorf("NoTLS is set")
 	}
 	if flags&NoSync != 0 {
 		t.Errorf("NoSync is set")
